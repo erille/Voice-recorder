@@ -1,0 +1,170 @@
+1|Le vif renard brun saute par-dessus le chien paresseux.
+2|Elle vend des coquillages au bord de la mer.
+3|Quelle quantité de bois une marmotte pourrait-elle balancer ?
+4|Un mouvement rapide de l'ennemi mettrait en péril six canonnières.
+5|Les cinq sorciers boxeurs sautent avec empressement.
+6|Remplissez ma caisse de cinq douzaines de pichets d'alcool.
+7|Les choucas adorent mon grand sphinx de quartz.
+8|Le chien paresseux dort au soleil.
+9|Les renardes brillantes sautent ; les oiseaux somnolents cancanent.
+10|Des zéphyrs rapides soufflent, vexant Jim, le crétin.
+11|Sphinx de quartz noir, juge mon vœu.
+12|Comment des grenouilles sauteuses comme des lames de rasoir peuvent-elles terrasser six gymnastes piqués !
+13|Le fou Fredrick a acheté de nombreux bijoux d'opale très raffinés.
+14|Nous avons rapidement jugé des boucles d'ivoire antiques pour le prochain prix.
+15|Des sorciers ensorcelés arrachent du lierre de la grande courtepointe.
+16|Mon ancien public de quiz au pub a remercié joyeusement.
+17|Six grands diables du Japon ont vite oublié comment valser.
+18|Ce métier exige un cran et un zèle supplémentaires de la part de tout jeune salarié.
+19|Peu de taxis noirs empruntent les grandes routes par les nuits calmes et brumeuses.
+20|Des vagues imposantes du mont Fuji s'élèvent rapidement dans les airs.
+21|Valse, nymphe, car des gigues rapides vexent Bud.
+22|Des dieux musclés viennent d'arriver pour l'interroger et l'irriter.
+23|Schwartzkopf, maussade, vexé par le QI du New Jersey.
+24|Des curés rusés interrogent et cajolent l'adorable chien sauvage.
+25|La valse a contrarié les nymphes rapides des grenouilles.
+26|De lourdes caisses exécutent des valses et des gigues rapides.
+27|Cinq zéphyrs cancanants secouent mon lit de cire.
+28|Le chien paresseux est allongé sur le tapis douillet.
+29|Pourquoi le poulet a-t-il traversé la route ?
+30|Tu crois que c'est déjà vendredi ?
+31|À quelle heure est la réunion demain ?
+32|Le gâteau est meilleur qu'il n'y paraît.
+33|Passe-moi le sel, s'il te plaît.
+34|Où as-tu garé la voiture ?
+35|On est arrivés ?
+36|Peux-tu m'aider avec mes devoirs ?
+37|Connais-tu le chemin de San José ?
+38|Veux-tu un café ?
+39|Combien de pommes y a-t-il dans le panier ?
+40|Est-ce qu'il va pleuvoir aujourd'hui ?
+41|Pourquoi le ciel est-il bleu ?
+42|Quelle est la capitale de la France ?
+43|Puis-je emprunter ton stylo ?
+44|Veux-tu faire un bonhomme de neige ?
+45|Comment s'écrit « encyclopédie » ?
+46|Pourquoi n'irions-nous pas nous promener ?
+47|Qui a sorti les chiens ?
+48|Cette place est-elle prise ?
+49|Quelle température fait-il dehors ?
+50|As-tu des frères et sœurs ?
+51|Es-tu déjà allé à New York ?
+52|Où as-tu grandi ?
+53|Quelle est ta couleur préférée ?
+54|Comment s'est passé ton week-end ?
+55|Pourquoi as-tu choisi ce métier ?
+56|Quel est ton livre préféré ?
+57|Sais-tu jouer de la guitare ?
+58|As-tu vu ce film ?
+59|Qu'est-ce qu'on mange ce soir ?
+60|Aimes-tu voyager ?
+61|Quelle heure est-il ?
+62|Sais-tu nager ?
+63|Où allons-nous ?
+64|Comment te sens-tu aujourd'hui ?
+65|Quel est ton plat préféré ?
+66|Pourquoi es-tu si heureux ?
+67|Quel âge as-tu ?
+68|Parles-tu espagnol ?
+69|Comment t'appelles-tu ?
+70|Où habites-tu ?
+71|Aimes-tu lire ?
+72|Sais-tu conduire ?
+73|Quel est ton hobby ?
+74|As-tu fini ton travail ?
+75|Aimes-tu les animaux ?
+76|Qu'as-tu mangé au petit-déjeuner ?
+77|Quel temps fait-il ?
+78|Où est l'hôpital le plus proche ?
+79|Pourquoi pleures-tu ?
+80|Quel est ton film préféré ?
+81|Fais-tu du sport ?
+82|Sais-tu faire du vélo ?
+83|Où est mon téléphone ?
+84|Combien ça coûte ?
+85|Quelle est la réponse à cette question ?
+86|Crois-tu aux fantômes ?
+87|Quel est ton métier de rêve ?
+88|Tu m'entends ?
+89|Où sont les toilettes ?
+90|Comment résous-tu ce problème ?
+91|Quelle est ton adresse e-mail ?
+92|Pourquoi as-tu dit ça ?
+93|Comment fais-tu cuire les pâtes ?
+94|Quelle est ta chanson préférée ?
+95|Peux-tu faire un dessin ?
+96|Où est la bibliothèque ?
+97|Aimes-tu la glace ?
+98|Comment s'est passée ta journée ?
+99|Pourquoi es-tu en retard ?
+100|Quel est ton numéro de téléphone ?
+101|As-tu besoin d'aide ?
+102|Où est ton bureau ?
+103|Peux-tu me passer la télécommande ?
+104|Comment démarres-tu cette machine ?
+105|Quel est ton animal préféré ?
+106|Aimes-tu danser ?
+107|Pourquoi es-tu si fatigué ?
+108|Comment ouvres-tu cette porte ?
+109|Quel est ton sport préféré ?
+110|Peux-tu réparer ça ?
+111|Où as-tu acheté ça ?
+112|Combien de personnes viennent ?
+113|Quel est ton jeu préféré ?
+114|Joues-tu aux jeux vidéo ?
+115|Où sont mes clés ?
+116|Comment dit-on bonjour en français ?
+117|Quelle est ta saison préférée ?
+118|As-tu un animal de compagnie ?
+119|Pourquoi fait-il si chaud ici ?
+120|Comment s'est passé le concert ?
+121|Quelles sont tes vacances préférées ?
+122|Sais-tu cuisiner ?
+123|Où es-tu allé en vacances ?
+124|Comment éteignez-vous les lumières ?
+125|Quel est ton dessert préféré ?
+126|Aimes-tu le chocolat ?
+127|Où est l'arrêt de bus ?
+128|Comment vas-tu au travail ?
+129|Quelle est ton émission de télévision préférée ?
+130|Aimes-tu ton travail ?
+131|Où est la station-service la plus proche ?
+132|Comment fais-tu un sandwich ?
+133|Quelle est ta boisson préférée ?
+134|Aimes-tu chanter ?
+135|Où est la banque la plus proche ?
+136|Comment joues-tu aux échecs ?
+137|Quel est ton fruit préféré ?
+138|Aimes-tu peindre ?
+139|Où est le parc le plus proche ?
+140|Comment rentres-tu chez toi ?
+141|Quel est ton légume préféré ?
+142|As-tu un permis de conduire ?
+143|Où est la sortie ?
+144|Comment écris-tu ton nom ?
+145|Quelle est ta fleur préférée ?
+146|Aimes-tu ton quartier ?
+147|Où est l’école ?
+148|Qu’en penses-tu ?
+149|Quel est ton moment préféré de la journée ?
+150|Tu as des projets pour le week-end ?
+151|Oh non ! J'ai oublié mes clés !
+152|Waouh ! C'est incroyable !
+153|Aïe ! C'était pas passé loin !
+154|Oups ! Désolé.
+155|Hé ! Attention !
+156|Youpi ! On a réussi !
+157|Ah ! J'ai trouvé la solution !
+158|Hourra ! C'est les vacances !
+159|Beurk, je suis tellement fatiguée.
+160|Oups, j'ai fait une erreur.
+161|Waouh, regarde ça !
+162|Hé, comment ça va ?
+163|Oh, je ne t'avais pas vu.
+164|Aïe, ça fait mal !
+165|Yaouh, c'est enfin là !
+166|Hein, c'est bizarre.
+167|Ah, c'est mieux.
+168|Hé, écoute ça !
+169|Oh, vraiment ?
+170|Waouh, quelle vue !

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enregistreur de phrases en WAV</title>
+  <script src="https://cdn.jsdelivr.net/gh/mattdiamond/Recorderjs@master/dist/recorder.js"></script>
+  <script>
+    // Fallback si la première URL ne fonctionne pas
+    if (typeof Recorder === 'undefined') {
+      console.log("Tentative de chargement avec URL alternative...");
+      const script = document.createElement('script');
+      script.src = 'https://raw.githubusercontent.com/mattdiamond/Recorderjs/master/dist/recorder.js';
+      script.onerror = function() {
+        console.error("Impossible de charger Recorder.js");
+      };
+      document.head.appendChild(script);
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      color: #6c5ce7;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+
+    .phrase-container {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 30px 0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #phrase {
+      font-size: 1.4rem;
+      color: #2d3436;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .progress {
+      margin: 20px 0;
+      color: #636e72;
+      font-size: 1.1rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+      min-width: 150px;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(116, 185, 255, 0.4);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #start {
+      background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+    }
+
+    #start:hover:not(:disabled) {
+      box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+    }
+
+    #stop {
+      background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+      box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
+    }
+
+    #stop:hover:not(:disabled) {
+      box-shadow: 0 8px 25px rgba(225, 112, 85, 0.4);
+    }
+
+    #next {
+      background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+      box-shadow: 0 5px 15px rgba(253, 203, 110, 0.3);
+    }
+
+    #next:hover:not(:disabled) {
+      box-shadow: 0 8px 25px rgba(253, 203, 110, 0.4);
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .status.show {
+      opacity: 1;
+    }
+
+    .status.recording {
+      background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+      color: #2d3436;
+    }
+
+    .status.success {
+      background: linear-gradient(135deg, #a8edea 0%, #00b894 100%);
+      color: white;
+    }
+
+    .status.error {
+      background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+      color: white;
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      #phrase {
+        font-size: 1.2rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      button {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎙️ Enregistreur Vocal</h1>
+    
+    <div class="phrase-container">
+      <div id="phrase">Chargement...</div>
+    </div>
+    
+    <div class="progress" id="progress">Phrase 1 sur 3</div>
+    
+    <div class="controls">
+  <button id="start">🎙️ Démarrer</button>
+  <button id="stop" disabled>⏹️ Arrêter</button>
+      <button id="next" disabled>➡️ Suivante</button>
+      <button id="selectMic">🎤 Choisir Microphone</button>
+    </div>
+    
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    // Phrases à enregistrer
+    const phrases = [
+    { id: 1, phrase: "Le vif renard brun saute par-dessus le chien paresseux." },
+    { id: 2, phrase: "Elle vend des coquillages au bord de la mer." },
+    { id: 3, phrase: "Quelle quantité de bois une marmotte pourrait-elle balancer ?" },
+    { id: 4, phrase: "Un mouvement rapide de l'ennemi mettrait en péril six canonnières." },
+    { id: 5, phrase: "Les cinq sorciers boxeurs sautent avec empressement." },
+    { id: 6, phrase: "Remplissez ma caisse de cinq douzaines de pichets d'alcool." },
+    { id: 7, phrase: "Les choucas adorent mon grand sphinx de quartz." },
+    { id: 8, phrase: "Le chien paresseux dort au soleil." },
+    { id: 9, phrase: "Les renardes brillantes sautent ; les oiseaux somnolents cancanent." },
+    { id: 10, phrase: "Des zéphyrs rapides soufflent, vexant Jim, le crétin." },
+    { id: 11, phrase: "Sphinx de quartz noir, juge mon vœu." },
+    { id: 12, phrase: "Comment des grenouilles sauteuses comme des lames de rasoir peuvent-elles terrasser six gymnastes piqués!" },
+    { id: 13, phrase: "Le fou Fredrick a acheté de nombreux bijoux d'opale très raffinés." },
+    { id: 14, phrase: "Nous avons rapidement jugé des boucles d'ivoire antiques pour le prochain prix." },
+    { id: 15, phrase: "Des sorciers ensorcelés arrachent du lierre de la grande courtepointe." },
+    { id: 16, phrase: "Mon ancien public de quiz au pub a remercié joyeusement." },
+    { id: 17, phrase: "Six grands diables du Japon ont vite oublié comment valser." },
+    { id: 18, phrase: "Ce métier exige un cran et un zèle supplémentaires de la part de tout jeune salarié." },
+    { id: 19, phrase: "Peu de taxis noirs empruntent les grandes routes par les nuits calmes et brumeuses." },
+    { id: 20, phrase: "Des vagues imposantes du mont Fuji s'élèvent rapidement dans les airs." },
+    { id: 21, phrase: "Valse, nymphe, car des gigues rapides vexent Bud." },
+    { id: 22, phrase: "Des dieux musclés viennent d'arriver pour l'interroger et l'irriter." },
+    { id: 23, phrase: "Schwartzkopf, maussade, vexé par le QI du New Jersey." },
+    { id: 24, phrase: "Des curés rusés interrogent et cajolent l'adorable chien sauvage." },
+    { id: 25, phrase: "La valse a contrarié les nymphes rapides des grenouilles." },
+    { id: 26, phrase: "De lourdes caisses exécutent des valses et des gigues rapides." },
+    { id: 27, phrase: "Cinq zéphyrs cancanants secouent mon lit de cire." },
+    { id: 28, phrase: "Le chien paresseux est allongé sur le tapis douillet." },
+    { id: 29, phrase: "Pourquoi le poulet a-t-il traversé la route ?" },
+    { id: 30, phrase: "Tu crois que c'est déjà vendredi?" },
+    { id: 31, phrase: "À quelle heure est la réunion demain?" },
+    { id: 32, phrase: "Le gâteau est meilleur qu'il n'y paraît." },
+    { id: 33, phrase: "Passe-moi le sel, s'il te plaît." },
+    { id: 34, phrase: "Où as-tu garé la voiture?" },
+    { id: 35, phrase: "On est arrivés?" },
+    { id: 36, phrase: "Peux-tu m'aider avec mes devoirs?" },
+    { id: 37, phrase: "Connais-tu le chemin de San José?" },
+    { id: 38, phrase: "Veux-tu un café?" },
+    { id: 39, phrase: "Combien de pommes y a-t-il dans le panier?" },
+    { id: 40, phrase: "Est-ce qu'il va pleuvoir aujourd'hui?" },
+    { id: 41, phrase: "Pourquoi le ciel est-il bleu?" },
+    { id: 42, phrase: "Quelle est la capitale de la France?" },
+    { id: 43, phrase: "Puis-je emprunter ton stylo?" },
+    { id: 44, phrase: "Veux-tu faire un bonhomme de neige?" },
+    { id: 45, phrase: "Comment s'écrit «encyclopédie»?" },
+    { id: 46, phrase: "Pourquoi n'irions-nous pas nous promener?" },
+    { id: 47, phrase: "Qui a sorti les chiens?" },
+    { id: 48, phrase: "Cette place est-elle prise?" },
+    { id: 49, phrase: "Quelle température fait-il dehors?" },
+    { id: 50, phrase: "As-tu des frères et sœurs?" },
+    { id: 51, phrase: "Es-tu déjà allé à New York?" },
+    { id: 52, phrase: "Où as-tu grandi?" },
+    { id: 53, phrase: "Quelle est ta couleur préférée?" },
+    { id: 54, phrase: "Comment s'est passé ton week-end?" },
+    { id: 55, phrase: "Pourquoi as-tu choisi ce métier?" },
+    { id: 56, phrase: "Quel est ton livre préféré?" },
+    { id: 57, phrase: "Sais-tu jouer de la guitare?" },
+    { id: 58, phrase: "As-tu vu ce film?" },
+    { id: 59, phrase: "Qu'est-ce qu'on mange ce soir?" },
+    { id: 60, phrase: "Aimes-tu voyager?" },
+    { id: 61, phrase: "Quelle heure est-il?" },
+    { id: 62, phrase: "Sais-tu nager?" },
+    { id: 63, phrase: "Où allons-nous?" },
+    { id: 64, phrase: "Comment te sens-tu aujourd'hui?" },
+    { id: 65, phrase: "Quel est ton plat préféré?" },
+    { id: 66, phrase: "Pourquoi es-tu si heureux?" },
+    { id: 67, phrase: "Quel âge as-tu?" },
+    { id: 68, phrase: "Parles-tu espagnol?" },
+    { id: 69, phrase: "Comment t'appelles-tu?" },
+    { id: 70, phrase: "Où habites-tu?" },
+    { id: 71, phrase: "Aimes-tu lire?" },
+    { id: 72, phrase: "Sais-tu conduire?" },
+    { id: 73, phrase: "Quel est ton hobby?" },
+    { id: 74, phrase: "As-tu fini ton travail?" },
+    { id: 75, phrase: "Aimes-tu les animaux?" },
+    { id: 76, phrase: "Qu'as-tu mangé au petit-déjeuner?" },
+    { id: 77, phrase: "Quel temps fait-il?" },
+    { id: 78, phrase: "Où est l'hôpital le plus proche?" },
+    { id: 79, phrase: "Pourquoi pleures-tu?" },
+    { id: 80, phrase: "Quel est ton film préféré?" },
+    { id: 81, phrase: "Fais-tu du sport?" },
+    { id: 82, phrase: "Sais-tu faire du vélo?" },
+    { id: 83, phrase: "Où est mon téléphone?" },
+    { id: 84, phrase: "Combien ça coûte?" },
+    { id: 85, phrase: "Quelle est la réponse à cette question?" },
+    { id: 86, phrase: "Crois-tu aux fantômes?" },
+    { id: 87, phrase: "Quel est ton métier de rêve?" },
+    { id: 88, phrase: "Tu m'entends?" },
+    { id: 89, phrase: "Où sont les toilettes?" },
+    { id: 90, phrase: "Comment résous-tu ce problème?" },
+    { id: 91, phrase: "Quelle est ton adresse e-mail?" },
+    { id: 92, phrase: "Pourquoi as-tu dit ça?" },
+    { id: 93, phrase: "Comment fais-tu cuire les pâtes?" },
+    { id: 94, phrase: "Quelle est ta chanson préférée?" },
+    { id: 95, phrase: "Peux-tu faire un dessin?" },
+    { id: 96, phrase: "Où est la bibliothèque?" },
+    { id: 97, phrase: "Aimes-tu la glace?" },
+    { id: 98, phrase: "Comment s'est passée ta journée?" },
+    { id: 99, phrase: "Pourquoi es-tu en retard?" },
+    { id: 100, phrase: "Quel est ton numéro de téléphone?" },
+    { id: 101, phrase: "As-tu besoin d'aide?" },
+    { id: 102, phrase: "Où est ton bureau?" },
+    { id: 103, phrase: "Peux-tu me passer la télécommande?" },
+    { id: 104, phrase: "Comment démarres-tu cette machine?" },
+    { id: 105, phrase: "Quel est ton animal préféré?" },
+    { id: 106, phrase: "Aimes-tu danser?" },
+    { id: 107, phrase: "Pourquoi es-tu si fatigué?" },
+    { id: 108, phrase: "Comment ouvres-tu cette porte?" },
+    { id: 109, phrase: "Quel est ton sport préféré?" },
+    { id: 110, phrase: "Peux-tu réparer ça?" },
+    { id: 111, phrase: "Où as-tu acheté ça?" },
+    { id: 112, phrase: "Combien de personnes viennent?" },
+    { id: 113, phrase: "Quel est ton jeu préféré?" },
+    { id: 114, phrase: "Joues-tu aux jeux vidéo?" },
+    { id: 115, phrase: "Où sont mes clés?" },
+    { id: 116, phrase: "Comment dit-on bonjour en français?" },
+    { id: 117, phrase: "Quelle est ta saison préférée?" },
+    { id: 118, phrase: "As-tu un animal de compagnie?" },
+    { id: 119, phrase: "Pourquoi fait-il si chaud ici?" },
+    { id: 120, phrase: "Comment s'est passé le concert?" },
+    { id: 121, phrase: "Quelles sont tes vacances préférées?" },
+    { id: 122, phrase: "Sais-tu cuisiner?" },
+    { id: 123, phrase: "Où es-tu allé en vacances?" },
+    { id: 124, phrase: "Comment éteignez-vous les lumières?" },
+    { id: 125, phrase: "Quel est ton dessert préféré?" },
+    { id: 126, phrase: "Aimes-tu le chocolat?" },
+    { id: 127, phrase: "Où est l'arrêt de bus?" },
+    { id: 128, phrase: "Comment vas-tu au travail?" },
+    { id: 129, phrase: "Quelle est ton émission de télévision préférée?" },
+    { id: 130, phrase: "Aimes-tu ton travail?" },
+    { id: 131, phrase: "Où est la station-service la plus proche?" },
+    { id: 132, phrase: "Comment fais-tu un sandwich?" },
+    { id: 133, phrase: "Quelle est ta boisson préférée?" },
+    { id: 134, phrase: "Aimes-tu chanter?" },
+    { id: 135, phrase: "Où est la banque la plus proche?" },
+    { id: 136, phrase: "Comment joues-tu aux échecs?" },
+    { id: 137, phrase: "Quel est ton fruit préféré?" },
+    { id: 138, phrase: "Aimes-tu peindre?" },
+    { id: 139, phrase: "Où est le parc le plus proche?" },
+    { id: 140, phrase: "Comment rentres-tu chez toi?" },
+    { id: 141, phrase: "Quel est ton légume préféré?" },
+    { id: 142, phrase: "As-tu un permis de conduire?" },
+    { id: 143, phrase: "Où est la sortie?" },
+    { id: 144, phrase: "Comment écris-tu ton nom?" },
+    { id: 145, phrase: "Quelle est ta fleur préférée?" },
+    { id: 146, phrase: "Aimes-tu ton quartier?" },
+    { id: 147, phrase: "Où est l’école?" },
+    { id: 148, phrase: "Qu’en penses-tu?" },
+    { id: 149, phrase: "Quel est ton moment préféré de la journée?" },
+    { id: 150, phrase: "Tu as des projets pour le week-end?" },
+    { id: 151, phrase: "Oh non! J'ai oublié mes clés!" },
+    { id: 152, phrase: "Waouh! C'est incroyable!" },
+    { id: 153, phrase: "Aïe! C'était pas passé loin!" },
+    { id: 154, phrase: "Oups! Désolé." },
+    { id: 155, phrase: "Hé ! Attention !" },
+    { id: 156, phrase: "Youpi ! On a réussi !" },
+    { id: 157, phrase: "Ah ! J'ai trouvé la solution !" },
+    { id: 158, phrase: "Hourra ! C'est les vacances !" },
+    { id: 159, phrase: "Beurk, je suis tellement fatiguée." },
+    { id: 160, phrase: "Oups, j'ai fait une erreur." },
+    { id: 161, phrase: "Waouh, regarde ça !" },
+    { id: 162, phrase: "Hé, comment ça va ?" },
+    { id: 163, phrase: "Oh, je ne t'avais pas vu." },
+    { id: 164, phrase: "Aïe, ça fait mal !" },
+    { id: 165, phrase: "Yaouh, c'est enfin là !" },
+    { id: 166, phrase: "Hein, c'est bizarre." },
+    { id: 167, phrase: "Ah, c'est mieux." },
+    { id: 168, phrase: "Hé, écoute ça !" },
+    { id: 169, phrase: "Oh, vraiment ?" },
+    { id: 170, phrase: "Waouh, quelle vue !" }
+    ];
+
+    let current = 0;
+    let recorder;
+    let audioStream;
+    let audioContext;
+    let defaultMicrophoneId = null;
+
+    // Éléments DOM
+    const phraseEl = document.getElementById("phrase");
+    const progressEl = document.getElementById("progress");
+    const startBtn = document.getElementById("start");
+    const stopBtn = document.getElementById("stop");
+    const nextBtn = document.getElementById("next");
+    const selectMicBtn = document.getElementById("selectMic");
+    const statusEl = document.getElementById("status");
+
+    function showPhrase() {
+      phraseEl.textContent = phrases[current].phrase;
+      progressEl.textContent = `Phrase ${current + 1} sur ${phrases.length}`;
+    }
+
+    function showStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.className = `status show ${type}`;
+      setTimeout(() => {
+        statusEl.classList.remove('show');
+      }, 3000);
+    }
+
+    function updateButtons(start, stop, next, selectMic = true) {
+      startBtn.disabled = !start;
+      stopBtn.disabled = !stop;
+      nextBtn.disabled = !next;
+      selectMicBtn.disabled = !selectMic;
+    }
+
+
+
+    async function startRecording() {
+      try {
+        // Vérifier si Recorder.js est disponible
+        if (!checkRecorderJS()) {
+          return;
+        }
+
+        showStatus("🎤 Demande d'accès au microphone...", "recording");
+
+        // Nettoyer les ressources existantes
+        if (audioStream) {
+          audioStream.getTracks().forEach(track => track.stop());
+        }
+        if (audioContext) {
+          audioContext.close();
+        }
+
+        // Demander l'accès au microphone avec le périphérique spécifique
+        const audioConstraints = {
+          audio: {
+            deviceId: defaultMicrophoneId ? { exact: defaultMicrophoneId } : undefined,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        };
+        
+        try {
+          audioStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
+          console.log("✅ Microphone spécifique utilisé");
+        } catch (error) {
+          console.warn("Fallback vers microphone par défaut:", error);
+          // Fallback vers le microphone par défaut si le spécifique échoue
+      audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+        
+        // Créer le contexte audio
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Attendre que le contexte soit prêt
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+        
+      const input = audioContext.createMediaStreamSource(audioStream);
+        
+        // Créer l'enregistreur
+        recorder = new Recorder(input);
+        
+        // Démarrer l'enregistrement
+      recorder.record();
+
+        // Mettre à jour l'interface
+        updateButtons(false, true, false, false);
+        showStatus("🔴 Enregistrement en cours...", "recording");
+        phraseEl.classList.add("pulse");
+        
+      } catch (error) {
+        console.error("Erreur lors du démarrage de l'enregistrement:", error);
+        
+        let errorMessage = "❌ Erreur: Impossible d'accéder au microphone";
+        
+        if (error.name === 'NotAllowedError') {
+          errorMessage = "❌ Permission refusée. Veuillez autoriser l'accès au microphone.";
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = "❌ Aucun microphone détecté. Vérifiez votre matériel.";
+        } else if (error.name === 'NotReadableError') {
+          errorMessage = "❌ Microphone utilisé par une autre application.";
+        }
+        
+        showStatus(errorMessage, "error");
+        updateButtons(true, false, false, true);
+      }
+    }
+
+
+    function stopRecording() {
+      try {
+        if (recorder && audioStream) {
+      recorder.stop();
+
+          // Exporter le fichier WAV
+      recorder.exportWAV(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+            a.download = `${phrases[current].id}.wav`;
+            document.body.appendChild(a);
+        a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus("✅ Fichier téléchargé avec succès!", "success");
+          });
+          
+          // Mettre à jour l'interface
+          updateButtons(false, false, true, true);
+          phraseEl.classList.remove("pulse");
+          
+          // Nettoyer les ressources
+          if (audioStream) {
+            audioStream.getTracks().forEach(track => track.stop());
+          }
+          if (audioContext) {
+            audioContext.close();
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'arrêt de l'enregistrement:", error);
+        showStatus("❌ Erreur lors de l'arrêt de l'enregistrement", "error");
+        updateButtons(true, false, false, true);
+      }
+    }
+
+    function nextPhrase() {
+      current++;
+      if (current < phrases.length) {
+        showPhrase();
+        updateButtons(true, false, false, true);
+        showStatus("Prêt pour la phrase suivante", "success");
+      } else {
+        phraseEl.textContent = "🎉 Toutes les phrases ont été enregistrées!";
+        progressEl.textContent = "Terminé!";
+        updateButtons(false, false, false, true);
+        showStatus("🎊 Dataset complet! Tous les fichiers ont été téléchargés.", "success");
+      }
+    }
+
+    // Event listeners
+    startBtn.addEventListener('click', startRecording);
+    stopBtn.addEventListener('click', stopRecording);
+    nextBtn.addEventListener('click', nextPhrase);
+    selectMicBtn.addEventListener('click', selectMicrophone);
+
+    // Obtenir le microphone par défaut
+    async function getDefaultMicrophone() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(device => device.kind === 'audioinput');
+        
+        console.log("🎤 Microphones détectés:", audioInputs.map(d => d.label));
+        
+        // Essayer de trouver le microphone par défaut
+        // Le microphone par défaut est généralement le premier ou celui avec un label spécifique
+        if (audioInputs.length > 0) {
+          // Chercher un microphone qui n'est pas "Built-in" ou "Internal"
+          const defaultMic = audioInputs.find(device => 
+            !device.label.toLowerCase().includes('built-in') && 
+            !device.label.toLowerCase().includes('internal') &&
+            !device.label.toLowerCase().includes('intégré')
+          ) || audioInputs[0]; // Fallback sur le premier si aucun trouvé
+          
+          defaultMicrophoneId = defaultMic.deviceId;
+          console.log("🎤 Microphone sélectionné:", defaultMic.label);
+          showStatus(`🎤 Microphone: ${defaultMic.label}`, "success");
+          return defaultMicrophoneId;
+        }
+      } catch (error) {
+        console.warn("Erreur lors de la détection des microphones:", error);
+      }
+      return null;
+    }
+
+    // Permettre à l'utilisateur de choisir le microphone
+    async function selectMicrophone() {
+      try {
+        showStatus("🔍 Recherche des microphones...", "recording");
+        
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(device => device.kind === 'audioinput');
+        
+        if (audioInputs.length === 0) {
+          showStatus("❌ Aucun microphone détecté", "error");
+          return;
+        }
+        
+        if (audioInputs.length === 1) {
+          showStatus("ℹ️ Un seul microphone détecté", "success");
+          return;
+        }
+        
+        // Créer une liste des microphones
+        const micList = audioInputs.map((device, index) => 
+          `${index + 1}. ${device.label || 'Microphone ' + (index + 1)}`
+        ).join('\n');
+        
+        const choice = prompt(
+          `Choisissez votre microphone (1-${audioInputs.length}):\n\n${micList}\n\nEntrez le numéro:`
+        );
+        
+        const micIndex = parseInt(choice) - 1;
+        
+        if (micIndex >= 0 && micIndex < audioInputs.length) {
+          defaultMicrophoneId = audioInputs[micIndex].deviceId;
+          showStatus(`✅ Microphone sélectionné: ${audioInputs[micIndex].label}`, "success");
+          console.log("🎤 Microphone choisi:", audioInputs[micIndex].label);
+        } else {
+          showStatus("❌ Sélection annulée", "error");
+        }
+        
+      } catch (error) {
+        console.error("Erreur lors de la sélection du microphone:", error);
+        showStatus("❌ Erreur lors de la sélection du microphone", "error");
+      }
+    }
+
+    // Vérifier si Recorder.js est chargé
+    function checkRecorderJS() {
+      if (typeof Recorder === 'undefined') {
+        showStatus("❌ Erreur: Recorder.js n'est pas chargé. Actualisez la page.", "error");
+        updateButtons(false, false, false);
+        return false;
+      }
+      return true;
+    }
+
+    // Initialisation
+    showPhrase();
+    if (checkRecorderJS()) {
+      updateButtons(true, false, false, true);
+      // Détecter le microphone par défaut au chargement
+      getDefaultMicrophone();
+    }
+  </script>
+</body>
+</html>
